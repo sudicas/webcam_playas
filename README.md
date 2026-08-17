@@ -16,7 +16,7 @@ Reproductor web que muestra en tiempo real las cámaras de varias playas de Gali
 
 ## 🚀 Demo
 
-👉 [Ver en vivo](https://sudicas.github.io/webcam-playas/)
+👉 [Ver en vivo](https://sudicas.github.io/webcam_playas/)
 
 ## 🛠️ Tecnologías
 
