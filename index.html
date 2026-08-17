@@ -1,47 +1,88 @@
-WebCams de las playas
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Reproductor de WebCams de las playas</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+  <meta name="description" content="Cámaras en vivo de las playas de Galicia">
+  <title>WebCams de las Playas de Galicia</title>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  
   <link rel="stylesheet" href="estilos.css">
 </head>
-
 <body>
-  <header>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-      <a class="navbar-brand" href="#">Reproductor de WebCams de las playas</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto">
-          <li class="nav-item active">
-            <a class="nav-link" href="#">Inicio <span class="sr-only">(current)</span></a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Acerca de</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Contacto</a>
-          </li>
-        </ul>
+  <!-- Header -->
+  <header class="header">
+    <nav class="nav">
+      <div class="nav-container">
+        <a href="#" class="nav-brand">
+          <div class="brand-icon">
+            <i class="bi bi-camera-video-fill"></i>
+          </div>
+          <div class="brand-text">
+            <span class="brand-title">WebCams Galicia</span>
+            <span class="brand-subtitle">Playas en directo</span>
+          </div>
+        </a>
+        
+        <div class="nav-status">
+          <span class="status-dot"></span>
+          <span class="status-text">7 cámaras en línea</span>
+        </div>
       </div>
     </nav>
   </header>
-  <main role="main">
-    <div class="container-fluid">
-      <div class="row" id="players-container"></div>
-      <!-- <div class="row">
-        <video id="video" class="" muted="" poster="https://frn.rtsp.me/BJpDlWb5MXTkubRpkANkQw/1769529717/poster/yRzN62a5.jpg" style="opacity: 1;" src="blob:https://rtsp.me/3d4b9407-97f5-4361-b4c3-20a4c1d92abb"></video>
-      </div> -->
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1 class="hero-title">Cámaras en vivo de las playas</h1>
+      <p class="hero-description">
+        Consulta el estado del mar en tiempo real desde las mejores playas de Galicia
+      </p>
+      <div class="hero-stats">
+        <div class="stat">
+          <span class="stat-number">7</span>
+          <span class="stat-label">Cámaras</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat">
+          <span class="stat-number">24/7</span>
+          <span class="stat-label">En directo</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat">
+          <span class="stat-number">HD</span>
+          <span class="stat-label">Calidad</span>
+        </div>
+      </div>
     </div>
+  </section>
+
+  <!-- Grid de cámaras -->
+  <main class="main">
+    <div class="cameras-grid" id="players-container"></div>
   </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <p class="footer-text">
+        <i class="bi bi-camera-video"></i>
+        Streams proporcionados por 
+        <a href="https://www.camaramar.com" target="_blank" rel="noopener">Camaramar</a>
+      </p>
+      <p class="footer-copy">Hecho con <i class="bi bi-heart-fill"></i> en Galicia</p>
+    </div>
+  </footer>
+
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
   <script src="script.js"></script>
 </body>
-
 </html>
