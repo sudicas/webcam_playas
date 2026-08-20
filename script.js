@@ -13,6 +13,11 @@ const cameras = [
   { src: "https://rtsp.me/embed/yRzN62a5/", type: "iframe", name: "Boiro", location: "Boiro" }
 ];
 
+const cams_number = cameras.length.toString();
+document.querySelectorAll('.cams_number').forEach(elemento => {
+  elemento.innerHTML = cams_number;
+});
+
 async function getStreamUrl(webcamId) {
   try {
     const response = await fetch(`${PROXY_URL}?webcam=${webcamId}&t=${Date.now()}`);
