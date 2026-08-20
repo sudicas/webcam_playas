@@ -9,6 +9,7 @@ const cameras = [
   { id: 103, name: "Coroso", location: "Ribeira" },
   { id: 96, name: "Perbes", location: "Miño" },
   { id: 87, name: "Ézaro", location: "Dumbría" },
+  { id: 42, name: "Ladeira", location: "Corrubedo" },
   { src: "https://rtsp.me/embed/yRzN62a5/", type: "iframe", name: "Boiro", location: "Boiro" }
 ];
 
