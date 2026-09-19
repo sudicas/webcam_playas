@@ -18,25 +18,17 @@ document.querySelectorAll('.cams_number').forEach(elemento => {
   elemento.innerHTML = cams_number;
 });
 
-async function getStreamUrl(webcamId) {
-  try {
-    const response = await fetch(`${PROXY_URL}?webcam=${webcamId}&t=${Date.now()}`);
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    const data = await response.json();
-    if (data.error) throw new Error(data.error);
-    return data.url;
-  } catch (error) {
-    console.error(`Error obteniendo stream para webcam ${webcamId}:`, error);
-    return null;
-  }
+// Devuelve la URL del playlist HLS a través del Worker
+function getStreamUrl(webcamId) {
+  return `${PROXY_URL}/hls/${webcamId}/playlist.m3u8?t=${Date.now()}`;
 }
 
 function createCameraCard(camera, index) {
   const card = document.createElement('div');
   card.className = 'camera-card';
-  
+
   const isIframe = camera.type === 'iframe';
-  
+
   card.innerHTML = `
     <div class="camera-header">
       <div class="camera-title">
@@ -53,7 +45,7 @@ function createCameraCard(camera, index) {
       <div class="live-badge">En vivo</div>
     </div>
     <div class="camera-video" id="player-${index}">
-      ${isIframe 
+      ${isIframe
         ? `<iframe src="${camera.src}" allowfullscreen scrolling="no"></iframe>`
         : `
           <div class="video-loading">
@@ -65,7 +57,7 @@ function createCameraCard(camera, index) {
       }
     </div>
   `;
-  
+
   return card;
 }
 
@@ -76,7 +68,7 @@ const videoElements = [];
 cameras.forEach((camera, index) => {
   const card = createCameraCard(camera, index);
   playersContainer.appendChild(card);
-  
+
   if (camera.type !== 'iframe') {
     videoElements.push({
       card,
@@ -88,27 +80,60 @@ cameras.forEach((camera, index) => {
 });
 
 // Cargar streams en paralelo
-videoElements.forEach(async ({ card, camera, video, loading }) => {
-  const streamUrl = await getStreamUrl(camera.id);
-  
-  if (streamUrl) {
-    if (loading) loading.remove();
-    
-    if (Hls.isSupported()) {
-      const hls = new Hls();
-      hls.loadSource(streamUrl);
+videoElements.forEach(({ card, camera, video, loading }) => {
+  const streamUrl = getStreamUrl(camera.id);
+
+  if (loading) loading.remove();
+
+  if (Hls.isSupported()) {
+    let hls = new Hls({
+      liveSyncDurationCount: 3,
+      manifestLoadingMaxRetry: 6,
+      manifestLoadingRetryDelay: 1000,
+      levelLoadingMaxRetry: 6,
+      fragLoadingMaxRetry: 6
+    });
+
+    const attach = () => {
+      const url = `${PROXY_URL}/hls/${camera.id}/playlist.m3u8?t=${Date.now()}`;
+      hls.loadSource(url);
       hls.attachMedia(video);
-      hls.on(Hls.Events.MANIFEST_PARSED, () => {
-        video.play().catch(e => console.log('Autoplay bloqueado:', e));
-      });
-    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-      video.src = streamUrl;
-      video.addEventListener('loadedmetadata', () => {
-        video.play().catch(e => console.log('Autoplay bloqueado:', e));
-      });
-    }
+    };
+
+    hls.on(Hls.Events.MANIFEST_PARSED, () => {
+      video.play().catch(e => console.log('Autoplay bloqueado:', e));
+    });
+
+    hls.on(Hls.Events.ERROR, (event, data) => {
+      if (data.fatal) {
+        console.warn(`HLS fatal en cámara ${camera.id}, recargando…`, data);
+        hls.destroy();
+        setTimeout(() => {
+          hls = new Hls({
+            liveSyncDurationCount: 3,
+            manifestLoadingMaxRetry: 6,
+            manifestLoadingRetryDelay: 1000,
+            levelLoadingMaxRetry: 6,
+            fragLoadingMaxRetry: 6
+          });
+          hls.on(Hls.Events.MANIFEST_PARSED, () => {
+            video.play().catch(() => {});
+          });
+          attach();
+        }, 2000);
+      }
+    });
+
+    attach();
+
+  } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+    // Safari nativo
+    video.src = streamUrl;
+    video.addEventListener('loadedmetadata', () => {
+      video.play().catch(e => console.log('Autoplay bloqueado:', e));
+    });
+
   } else {
-    if (loading) loading.remove();
     const videoContainer = card.querySelector('.camera-video');
     videoContainer.innerHTML = `
       <div class="video-error">
